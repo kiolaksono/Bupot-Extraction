@@ -1,0 +1,50 @@
+name: Build EXE
+
+# Jalan otomatis tiap push ke main/master, atau bisa dipicu manual
+# lewat tab "Actions" -> "Build EXE" -> "Run workflow".
+# Kalau push disertai tag yang diawali "v" (misal v1.0.0), hasil .exe
+# otomatis dilampirkan ke GitHub Release.
+on:
+  push:
+    branches: [main, master]
+    tags: ["v*"]
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pdfplumber openpyxl
+          pip install pyinstaller
+
+      - name: Build .exe
+        run: >
+          pyinstaller --onefile --console
+          --name rekap_bukpot
+          rekap_bukpot.py
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: rekap_bukpot-windows-exe
+          path: dist/rekap_bukpot.exe
+
+      - name: Attach to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/rekap_bukpot.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
