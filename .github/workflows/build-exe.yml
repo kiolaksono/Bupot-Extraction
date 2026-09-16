@@ -33,18 +33,18 @@ jobs:
         run: >
           pyinstaller --onefile --console
           --name rekap_bukpot
-          rekap_bukpot.py
+          pph23_extraction.py
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: rekap_bukpot-windows-exe
-          path: dist/rekap_bukpot.exe
+          path: dist/pph23_extraction.exe
 
       - name: Attach to GitHub Release
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/rekap_bukpot.exe
+          files: dist/pph23_extraction.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
