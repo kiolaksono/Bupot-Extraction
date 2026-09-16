@@ -1,3 +1,5 @@
+
+
 import re
 import sys
 from pathlib import Path
@@ -162,11 +164,18 @@ def extract_bukpot(pdf_path: Path) -> dict:
 # ----------------------------------------------------------------------
 
 def main():
-    folder = Path(getattr(sys, "_MEIPASS", None) or Path(__file__).resolve().parent)
+    if getattr(sys, "frozen", False):
+        # Dijalankan sebagai .exe hasil PyInstaller -> pakai lokasi file .exe itu sendiri,
+        # BUKAN sys._MEIPASS (itu folder sementara ekstraksi PyInstaller, selalu kosong).
+        folder = Path(sys.executable).resolve().parent
+    else:
+        # Dijalankan sebagai script .py biasa
+        folder = Path(__file__).resolve().parent
+
     pdf_files = sorted(folder.glob("*.pdf"))
 
     if not pdf_files:
-        print("Tidak ada file PDF ditemukan di folder ini.")
+        print(f"Tidak ada file PDF ditemukan di folder ini ({folder}).")
         input("Tekan ENTER untuk keluar...")
         return
 
