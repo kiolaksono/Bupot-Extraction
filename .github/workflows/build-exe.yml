@@ -32,13 +32,13 @@ jobs:
       - name: Build .exe
         run: >
           pyinstaller --onefile --console
-          --name rekap_bukpot
+          --name pph23_extraction
           pph23_extraction.py
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: rekap_bukpot-windows-exe
+          name: pph23_extraction-windows-exe
           path: dist/pph23_extraction.exe
 
       - name: Attach to GitHub Release
